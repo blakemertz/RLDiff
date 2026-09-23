@@ -30,5 +30,7 @@ dependencies:
       - wandb==0.21.4
       - posebusters==0.3.1
       - accelerate==0.24.1
-      - huggingface_hub==0.35.0
+      # huggingface_hub pinned to a release contemporaneous with accelerate==0.24.1
+      # (0.35.0 postdates it by ~2 years and drops APIs accelerate 0.24.x still uses)
+      - huggingface_hub==0.19.4
       - safetensors==0.6.2

@@ -18,6 +18,7 @@ dependencies:
       - e3nn==0.5.1
       - fair-esm==2.0.0
       - spyrmsd==0.9.0
+      - posebusters==0.3.1
       - torch==1.13.1+cu117
       - torch-geometric==2.2.0
       - -f https://data.pyg.org/whl/torch-1.13.0+cu117.html
