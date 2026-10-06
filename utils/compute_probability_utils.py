@@ -1,6 +1,5 @@
 import torch
 import torch.nn.functional as F
-from torch.autograd import Variable
 import math
 import numpy as np
 from rdkit import Chem
