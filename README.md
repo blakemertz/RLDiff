@@ -24,6 +24,15 @@ conda env create -f inference_env.yml
 conda activate RLDiff
 ```
 
+> **Why two separate environments?** `inference_env.yml` and `training_env.yml` pin the exact
+> same core stack (PyTorch, PyTorch Geometric, e3nn, RDKit, etc.) — there's no version conflict
+> between them. `training_env.yml` is strictly additive: it's `inference_env.yml` plus
+> `accelerate` (drives the RL fine-tuning loop's gradient accumulation and mixed precision) and
+> `wandb` (experiment tracking during training runs), neither of which inference has any use for.
+> They're kept separate so that running inference — the common case — doesn't require installing
+> or configuring training-only tooling, and so the inference environment stays smaller and faster
+> to set up. If you're doing both in the same session, `training_env.yml` alone is sufficient.
+
 #### GNINA (required for `--minimize_and_rerank`)
 
 Download the GNINA binary, make it executable, and place it on your PATH:
@@ -144,6 +153,8 @@ Create and activate the training conda environment:
 conda env create -f training_env.yml
 conda activate RLDiff_train
 ```
+(This superset of `inference_env.yml` adds training-only tooling — see the note in the
+[Inference installation](#1-installation) section for why the two are kept separate.)
 
 ### 2. Download PDBBind
 

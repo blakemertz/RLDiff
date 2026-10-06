@@ -26,11 +26,23 @@ stack to match the parent. Two fixes needed beyond a straight version bump:
 - Deleted the orphaned `utils/interaction.py`, `utils/reward_utils.py`, `utils/system_prep.py` —
   confirmed unreachable from any entry point (`train.py`, `inference.py`, `src/*.py`), importing
   only each other. The original developers never finished wiring these in.
-- GNINA (external prebuilt binary, used for `--minimize_and_rerank`) was not re-validated — not
-  installed on this machine. Flagged in the original roadmap as needing a build compatible with
-  the target CUDA/driver; still an open item whenever `--minimize_and_rerank` is actually needed.
 - The namespace-package `sys.path` integration with the parent repo needed no changes — directory
   layout is untouched.
+
+## GNINA validation (added 2026-10-06)
+
+Tested against a local GNINA 1.3.2 install (`/usr/local/bin/gnina`, built Jul 2025, linked against
+`libcudart.so.12`) — a newer build than the README's documented `v1.0` download link, and it works
+cleanly. Ran the full `--minimize_and_rerank` path (the "DiffDock-Pocket RL++" mode from the paper)
+on the 3dpf smoke complex:
+```
+[minimize] Step 2/2: smina minimize + gnina rerank...
+    [OK]   3dpf_protein: score=0.2s min=0.1s rerank=1.8s
+[minimize] Done: 1 OK, 0 failed in 2.1s
+```
+Top-ranked pose (by GNINA CNN score, 0.90) lands at 0.41 Å RMSD to the crystal structure — sane,
+comfortably under the 2 Å threshold. No code or environment changes were needed; `smina` (conda)
+and system-installed `gnina` are both resolved correctly from within the `RLDiff` conda env's PATH.
 
 ## Validation
 
@@ -96,7 +108,6 @@ enabled, many epochs, full PDBBind) best done on the HPC fleet (Phase 4), not th
 deleted `RLDiff/utils/interaction.py`, `RLDiff/utils/reward_utils.py`, `RLDiff/utils/system_prep.py`.
 
 ## Not yet done
-- GNINA binary compatibility with the target CUDA/driver — untested, no local install.
 - The `trajectory_generation_val` infinite-retry-on-total-failure gap noted above is unfixed;
   recommend a hard iteration cap if RLDiff's own maintainers pick this up.
 - Real-scale RL fine-tuning validation (branching enabled, full dataset, meaningful convergence
